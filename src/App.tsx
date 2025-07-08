@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Auth0Provider } from '@auth0/auth0-react';
 import { ThemeProvider } from './themes/ThemeContext';
 import Layout from './components/Layout/Layout';
 import Home from './pages/Home';
-import Profile from './pages/Profile';
-import Products from './pages/Products';
-import Rewards from './pages/Rewards';
-import Stores from './pages/Stores';
 import config from './config/config';
+
+// Lazy load pages for code splitting
+const Profile = lazy(() => import('./pages/Profile'));
+const Products = lazy(() => import('./pages/Products'));
+const Rewards = lazy(() => import('./pages/Rewards'));
+const Stores = lazy(() => import('./pages/Stores'));
 
 const App: React.FC = () => {
   return (
@@ -28,10 +30,26 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
-              <Route path="profile" element={<Profile />} />
-              <Route path="rewards" element={<Rewards />} />
-              <Route path="products" element={<Products />} />
-              <Route path="stores" element={<Stores />} />
+              <Route path="profile" element={
+                <Suspense fallback={<div>Loading Profile...</div>}>
+                  <Profile />
+                </Suspense>
+              } />
+              <Route path="rewards" element={
+                <Suspense fallback={<div>Loading Rewards...</div>}>
+                  <Rewards />
+                </Suspense>
+              } />
+              <Route path="products" element={
+                <Suspense fallback={<div>Loading Products...</div>}>
+                  <Products />
+                </Suspense>
+              } />
+              <Route path="stores" element={
+                <Suspense fallback={<div>Loading Stores...</div>}>
+                  <Stores />
+                </Suspense>
+              } />
             </Route>
           </Routes>
         </Router>

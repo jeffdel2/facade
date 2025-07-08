@@ -12,7 +12,7 @@ import {
   Button,
   Snackbar,
   Alert,
-  Grid as MuiGrid
+
 } from '@mui/material';
 import { 
   StarOutline as StarIcon,
@@ -23,7 +23,7 @@ import {
   Save as SaveIcon
 } from '@mui/icons-material';
 import { useTheme as useMuiTheme } from '@mui/material/styles';
-import { useTheme } from '../themes/ThemeContext';
+
 
 interface UserMetadata {
   address?: string;
@@ -64,7 +64,7 @@ const ProfileStat: React.FC<{
 
 const Profile: React.FC = () => {
   const { user, isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
-  const { currentTheme } = useTheme();
+
   const muiTheme = useMuiTheme();
 
   const [isEditing, setIsEditing] = useState(false);

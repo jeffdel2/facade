@@ -5,7 +5,7 @@ import { useTheme } from '../themes/ThemeContext';
 import { ThemeType } from '../themes/types';
 
 const ThemeSelector: React.FC = () => {
-  const { currentTheme, setThemeType } = useTheme();
+  const { setThemeType } = useTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 

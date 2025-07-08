@@ -187,7 +187,7 @@ const Stores: React.FC = () => {
       }}>
         {locations.map((location) => (
           <Card key={location.id} sx={{ display: 'flex', flexDirection: 'column' }}>
-            {(isThemePark && isPark(location) || isHospitality && isHotel(location)) && (
+            {((isThemePark && isPark(location)) || (isHospitality && isHotel(location))) && (
               <CardMedia
                 component="img"
                 height="250"
