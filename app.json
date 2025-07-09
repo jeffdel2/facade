@@ -1,0 +1,27 @@
+{
+  "name": "facade-react-app",
+  "description": "Optimized React app for Heroku deployment",
+  "repository": "https://github.com/yourusername/facade",
+  "keywords": ["react", "typescript", "heroku"],
+  "env": {
+    "NODE_ENV": {
+      "description": "Environment for the app",
+      "value": "production"
+    },
+    "GENERATE_SOURCEMAP": {
+      "description": "Disable source maps for production",
+      "value": "false"
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  }
+} 
