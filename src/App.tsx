@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Security, LoginCallback } from '@okta/okta-react';
 import { OktaAuth } from '@okta/okta-auth-js';
@@ -15,19 +15,38 @@ const Rewards = lazy(() => import('./pages/Rewards'));
 const Stores = lazy(() => import('./pages/Stores'));
 
 const App: React.FC = () => {
-  const oktaAuth = new OktaAuth({
+  const oktaAuth = useMemo(() => new OktaAuth({
     issuer: config.okta.issuer,
     clientId: config.okta.clientId,
     redirectUri: config.okta.redirectUri,
     scopes: ['openid', 'profile', 'email'],
     pkce: true,
-    responseType: ['code']
-  });
+    responseType: ['code'],
+    tokenManager: {
+      autoRenew: true,
+      autoRemove: true
+    },
+    postLogoutRedirectUri: window.location.origin
+  }), []);
 
   const restoreOriginalUri = async (_oktaAuth: any, originalUri: string) => {
     console.log('Restoring original URI:', originalUri);
     window.location.replace(originalUri);
   };
+
+  // Check for existing session on app load
+  React.useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const isAuthenticated = await oktaAuth.isAuthenticated();
+        console.log('Session check - Is authenticated:', isAuthenticated);
+      } catch (error) {
+        console.error('Session check error:', error);
+      }
+    };
+    
+    checkSession();
+  }, [oktaAuth]);
 
   // Debug logging
   console.log('Okta Config:', {
