@@ -19,9 +19,7 @@ const App: React.FC = () => {
       clientId={config.auth0.clientId}
       authorizationParams={{
         redirect_uri: window.location.origin,
-        //audience: `https://${config.auth0.mgmtDomain}/api/v2/`,
-        //audience: `https://${config.auth0.mgmtDomain}/api/v2/`,
-        audience: `https://my-portal.cic-demo-platform.auth0app.com/api/v2/`,
+        audience: config.auth0.audience,
         scope: 'openid profile email read:current_user update:current_user_metadata'
       }}
     >

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material';
 import { ThemeType, ThemeConfig } from './types';
 import { themes } from './themes';
@@ -23,14 +23,35 @@ interface ThemeProviderProps {
   initialThemeType?: ThemeType;
 }
 
+const THEME_STORAGE_KEY = 'selected-theme';
+
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   children,
   initialThemeType = 'retail'
 }) => {
-  const [currentTheme, setCurrentTheme] = useState<ThemeConfig>(themes[initialThemeType]);
+  // Get saved theme from localStorage or use initial theme
+  const getSavedTheme = (): ThemeType => {
+    try {
+      const saved = localStorage.getItem(THEME_STORAGE_KEY);
+      return saved && themes[saved as ThemeType] ? (saved as ThemeType) : initialThemeType;
+    } catch {
+      return initialThemeType;
+    }
+  };
+
+  const [currentTheme, setCurrentTheme] = useState<ThemeConfig>(() => {
+    const savedThemeType = getSavedTheme();
+    return themes[savedThemeType];
+  });
 
   const setThemeType = (type: ThemeType) => {
     setCurrentTheme(themes[type]);
+    // Save to localStorage
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, type);
+    } catch (error) {
+      console.warn('Failed to save theme preference:', error);
+    }
   };
 
   const muiTheme = createTheme({

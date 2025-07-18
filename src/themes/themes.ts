@@ -388,9 +388,107 @@ export const hospitalityTheme: ThemeConfig = {
   }
 };
 
+export const medicalTheme: ThemeConfig = {
+  type: 'medical',
+  branding: {
+    name: 'MedSupply Pro',
+    tagline: 'Advanced equipment for healthcare excellence',
+    loyaltyProgram: {
+      name: 'Healthcare Partner Program',
+      description: 'Earn rewards on medical equipment and supplies while supporting patient care'
+    },
+    features: [
+      {
+        title: 'Equipment Financing',
+        description: 'Flexible financing options for hospitals, clinics, and healthcare providers.',
+        image: 'https://picsum.photos/seed/medical-financing/400/300'
+      },
+      {
+        title: 'Technical Support',
+        description: '24/7 technical support and training for all medical equipment.',
+        image: 'https://picsum.photos/seed/medical-support/400/300'
+      },
+      {
+        title: 'Maintenance Services',
+        description: 'Comprehensive maintenance and calibration services to ensure equipment reliability.',
+        image: 'https://picsum.photos/seed/medical-maintenance/400/300'
+      }
+    ],
+    palette: {
+      primary: {
+        main: '#2e7d32',
+        light: '#4caf50',
+        dark: '#1b5e20'
+      },
+      secondary: {
+        main: '#0277bd',
+        light: '#0288d1',
+        dark: '#01579b'
+      }
+    },
+    products: [
+      {
+        id: 1,
+        name: 'Digital X-Ray System',
+        price: 125000.00,
+        rating: 4.8,
+        image: 'https://picsum.photos/seed/xray-system/400/300',
+        category: 'Imaging',
+        pointsEarned: 25000
+      },
+      {
+        id: 2,
+        name: 'Patient Monitor',
+        price: 8500.00,
+        rating: 4.7,
+        image: 'https://picsum.photos/seed/patient-monitor/400/300',
+        category: 'Monitoring',
+        pointsEarned: 1700
+      },
+      {
+        id: 3,
+        name: 'Surgical Instruments Set',
+        price: 2500.00,
+        rating: 4.9,
+        image: 'https://picsum.photos/seed/surgical-instruments/400/300',
+        category: 'Surgical',
+        pointsEarned: 500
+      },
+      {
+        id: 4,
+        name: 'Ultrasound Machine',
+        price: 45000.00,
+        rating: 4.6,
+        image: 'https://picsum.photos/seed/ultrasound/400/300',
+        category: 'Imaging',
+        pointsEarned: 9000
+      },
+      {
+        id: 5,
+        name: 'Infusion Pump',
+        price: 3200.00,
+        rating: 4.8,
+        image: 'https://picsum.photos/seed/infusion-pump/400/300',
+        category: 'Therapy',
+        pointsEarned: 640
+      },
+      {
+        id: 6,
+        name: 'Medical Cart System',
+        price: 1800.00,
+        rating: 4.5,
+        image: 'https://picsum.photos/seed/medical-cart/400/300',
+        category: 'Storage',
+        pointsEarned: 360
+      }
+    ]
+  }
+};
+
 export const themes: Record<ThemeType, ThemeConfig> = {
   retail: retailTheme,
   themePark: themeParkTheme,
   telecom: telecomTheme,
-  hospitality: hospitalityTheme
+  hospitality: hospitalityTheme,
+  medical: medicalTheme
 }; 

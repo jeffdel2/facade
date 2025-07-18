@@ -14,6 +14,7 @@ import {
   Alert,
 
 } from '@mui/material';
+import config from '../config/config';
 import { 
   StarOutline as StarIcon,
   CalendarToday as CalendarIcon,
@@ -93,22 +94,53 @@ const Profile: React.FC = () => {
     const getUserMetadata = async () => {
       try {
         const accessToken = await getAccessTokenSilently();
-        const domain = process.env.REACT_APP_AUTH0_DOMAIN;
-        const userDetailsByIdUrl = `https://${domain}/api/v2/users/${user?.sub}`;
+        const mgmtDomain = config.auth0.mgmtDomain;
+        //const userDetailsByIdUrl = `https://${mgmtDomain}/api/v2/users/${user?.sub}`;
+        const userDetailsByIdUrl = `https://${mgmtDomain}/userinfo`;
+
+        console.log('Fetching metadata from:', userDetailsByIdUrl);
+        console.log('User sub:', user?.sub);
+        console.log('Management domain:', mgmtDomain);
 
         const metadataResponse = await fetch(userDetailsByIdUrl, {
           headers: {
-            Authorization: `Bearer ${accessToken}`
+            //
+            access_token: `${accessToken}`
           }
         });
 
-        const { user_metadata } = await metadataResponse.json();
+        console.log('Response status:', metadataResponse.status);
+        console.log('Response headers:', Object.fromEntries(metadataResponse.headers.entries()));
+
+        if (!metadataResponse.ok) {
+          const errorText = await metadataResponse.text();
+          console.log('Error response:', errorText);
+          throw new Error(`HTTP error! status: ${metadataResponse.status}`);
+        }
+
+        const responseData = await metadataResponse.json();
+        console.log('Full response data:', responseData);
+        
+        const { user_metadata } = responseData;
+        console.log('User metadata:', user_metadata);
         
         if (user_metadata) {
           setUserMetadata(user_metadata);
+        } else {
+          console.log('No user_metadata found in response');
         }
       } catch (error) {
         console.error('Error fetching user metadata:', error);
+        // Fallback to empty metadata if API call fails
+        setUserMetadata({
+          address: '',
+          phone: '',
+          birthdate: '',
+          preferences: {
+            notifications: true,
+            newsletter: true
+          }
+        });
       }
     };
 
@@ -121,10 +153,10 @@ const Profile: React.FC = () => {
     setIsSaving(true);
     try {
       const accessToken = await getAccessTokenSilently();
-      const domain = process.env.REACT_APP_AUTH0_DOMAIN;
-      const userDetailsByIdUrl = `https://${domain}/api/v2/users/${user?.sub}`;
+      const mgmtDomain = config.auth0.mgmtDomain;
+      const userDetailsByIdUrl = `https://${mgmtDomain}/api/v2/users/${user?.sub}`;
 
-      await fetch(userDetailsByIdUrl, {
+      const response = await fetch(userDetailsByIdUrl, {
         method: 'PATCH',
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -132,6 +164,10 @@ const Profile: React.FC = () => {
         },
         body: JSON.stringify({ user_metadata: userMetadata })
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       setSnackbar({
         open: true,

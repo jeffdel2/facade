@@ -1,6 +1,6 @@
 import { PaletteOptions } from '@mui/material';
 
-export type ThemeType = 'retail' | 'themePark' | 'telecom' | 'hospitality';
+export type ThemeType = 'retail' | 'themePark' | 'telecom' | 'hospitality' | 'medical';
 
 export interface Product {
   id: number;

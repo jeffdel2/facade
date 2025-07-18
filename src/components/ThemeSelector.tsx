@@ -44,6 +44,7 @@ const ThemeSelector: React.FC = () => {
         <MenuItem onClick={() => handleThemeChange('themePark')}>Theme Park</MenuItem>
         <MenuItem onClick={() => handleThemeChange('telecom')}>Mobile Provider</MenuItem>
         <MenuItem onClick={() => handleThemeChange('hospitality')}>Luxury Hotels</MenuItem>
+        <MenuItem onClick={() => handleThemeChange('medical')}>Medical Equipment</MenuItem>
       </Menu>
     </>
   );
