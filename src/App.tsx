@@ -38,10 +38,20 @@ const App: React.FC = () => {
   React.useEffect(() => {
     const checkSession = async () => {
       try {
+        console.log('App: Checking for existing session...');
         const isAuthenticated = await oktaAuth.isAuthenticated();
-        console.log('Session check - Is authenticated:', isAuthenticated);
+        console.log('App: Session check result:', isAuthenticated);
+        
+        if (isAuthenticated) {
+          try {
+            const user = await oktaAuth.getUser();
+            console.log('App: User found:', user);
+          } catch (userError) {
+            console.error('App: Error getting user:', userError);
+          }
+        }
       } catch (error) {
-        console.error('Session check error:', error);
+        console.error('App: Session check error:', error);
       }
     };
     

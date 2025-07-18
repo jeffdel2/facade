@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { useOktaAuth } from '@okta/okta-react';
 import { useTheme } from '../themes/ThemeContext';
+import AuthDebug from '../components/AuthDebug';
 
 const getWelcomeMessage = (themeType: string, userName: string) => {
   switch (themeType) {
@@ -36,6 +37,9 @@ const Home: React.FC = () => {
 
   return (
     <Box>
+      {/* SSO Debug Component - Remove after testing */}
+      <AuthDebug />
+      
       {/* Hero Section */}
       <Paper 
         elevation={0}
