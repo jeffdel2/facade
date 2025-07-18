@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography, Box, Card, CardContent, CardActions, Button } from '@mui/material';
-import { useAuth0 } from '@auth0/auth0-react';
+import { useOktaAuth } from '@okta/okta-react';
 
 const rewardTiers = [
   {
@@ -36,7 +36,8 @@ const rewardTiers = [
 ];
 
 const Rewards: React.FC = () => {
-  const { isAuthenticated, loginWithRedirect } = useAuth0();
+  const { authState, oktaAuth } = useOktaAuth();
+  const isAuthenticated = authState?.isAuthenticated || false;
 
   return (
     <Box>
@@ -52,7 +53,7 @@ const Rewards: React.FC = () => {
             variant="contained"
             color="primary"
             size="large"
-            onClick={() => loginWithRedirect()}
+            onClick={() => oktaAuth.signInWithRedirect({ originalUri: window.location.origin })}
             sx={{ mt: 2 }}
           >
             Join Now

@@ -1,9 +1,11 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Auth0Provider } from '@auth0/auth0-react';
+import { Security, LoginCallback } from '@okta/okta-react';
+import { OktaAuth } from '@okta/okta-auth-js';
 import { ThemeProvider } from './themes/ThemeContext';
 import Layout from './components/Layout/Layout';
 import Home from './pages/Home';
+import SecureRoute from './components/SecureRoute';
 import config from './config/config';
 
 // Lazy load pages for code splitting
@@ -13,25 +15,41 @@ const Rewards = lazy(() => import('./pages/Rewards'));
 const Stores = lazy(() => import('./pages/Stores'));
 
 const App: React.FC = () => {
+  const oktaAuth = new OktaAuth({
+    issuer: config.okta.issuer,
+    clientId: config.okta.clientId,
+    redirectUri: config.okta.redirectUri,
+    scopes: ['openid', 'profile', 'email'],
+    pkce: true,
+    responseType: ['code']
+  });
+
+  const restoreOriginalUri = async (_oktaAuth: any, originalUri: string) => {
+    console.log('Restoring original URI:', originalUri);
+    window.location.replace(originalUri);
+  };
+
+  // Debug logging
+  console.log('Okta Config:', {
+    issuer: config.okta.issuer,
+    clientId: config.okta.clientId,
+    redirectUri: config.okta.redirectUri
+  });
+
   return (
-    <Auth0Provider
-      domain={config.auth0.domain}
-      clientId={config.auth0.clientId}
-      authorizationParams={{
-        redirect_uri: window.location.origin,
-        audience: config.auth0.audience,
-        scope: 'openid profile email read:current_user update:current_user_metadata'
-      }}
-    >
+    <Security oktaAuth={oktaAuth} restoreOriginalUri={restoreOriginalUri}>
       <ThemeProvider initialThemeType={config.defaultTheme}>
         <Router>
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
+              <Route path="login/callback" element={<LoginCallback />} />
               <Route path="profile" element={
-                <Suspense fallback={<div>Loading Profile...</div>}>
-                  <Profile />
-                </Suspense>
+                <SecureRoute>
+                  <Suspense fallback={<div>Loading Profile...</div>}>
+                    <Profile />
+                  </Suspense>
+                </SecureRoute>
               } />
               <Route path="rewards" element={
                 <Suspense fallback={<div>Loading Rewards...</div>}>
@@ -52,7 +70,7 @@ const App: React.FC = () => {
           </Routes>
         </Router>
       </ThemeProvider>
-    </Auth0Provider>
+    </Security>
   );
 };
 

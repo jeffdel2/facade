@@ -4,11 +4,12 @@ A React-based rewards program application with configurable themes.
 
 ## Features
 
-- User authentication via Auth0
+- User authentication via Okta
 - Dynamic theme switching between:
   - Retail Store
   - Theme Park
   - Mobile Provider
+  - Medical Equipment Supplier
 - Rewards program management
 - Product browsing
 - Store locator
@@ -49,8 +50,10 @@ Themes can be switched using the theme selector in the application header. The d
 Create a `.env` file in the project root with the following variables:
 
 ```
-REACT_APP_AUTH0_DOMAIN=your-auth0-domain
-REACT_APP_AUTH0_CLIENT_ID=your-auth0-client-id
+REACT_APP_OKTA_DOMAIN=your-okta-domain.okta.com
+REACT_APP_OKTA_CLIENT_ID=your-okta-client-id
+REACT_APP_OKTA_ISSUER=https://your-okta-domain.okta.com/oauth2/default
+REACT_APP_OKTA_REDIRECT_URI=http://localhost:3000
 ```
 
 ## Getting Started

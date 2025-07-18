@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Box, Typography, ButtonBase } from '@mui/material';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { useAuth0 } from '@auth0/auth0-react';
+import { useOktaAuth } from '@okta/okta-react';
 import { useTheme } from '../../themes/ThemeContext';
 
 const NavButton: React.FC<{
@@ -44,8 +44,11 @@ const NavButton: React.FC<{
 };
 
 const Navigation: React.FC = () => {
-  const { isAuthenticated, loginWithRedirect, logout, user } = useAuth0();
+  const { authState, oktaAuth } = useOktaAuth();
   const { currentTheme } = useTheme();
+  
+  const isAuthenticated = authState?.isAuthenticated || false;
+  const user = authState?.idToken?.claims;
 
   return (
     <Box sx={{ 
@@ -70,7 +73,7 @@ const Navigation: React.FC = () => {
           <Button 
             variant="contained"
             size="small"
-            onClick={() => loginWithRedirect()}
+            onClick={() => oktaAuth.signInWithRedirect({ originalUri: window.location.origin })}
             sx={{ 
               ml: 1,
               borderRadius: 2,
@@ -100,12 +103,12 @@ const Navigation: React.FC = () => {
               color: 'text.secondary'
             }}
           >
-            {user?.name}
+            {typeof user?.name === 'string' ? user.name : typeof user?.email === 'string' ? user.email : 'User'}
           </Typography>
           <Button
             variant="outlined"
             size="small"
-            onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
+            onClick={() => oktaAuth.signOut()}
             sx={{ 
               borderRadius: 2,
               textTransform: 'none',

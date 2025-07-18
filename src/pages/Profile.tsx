@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
+import React, { useState } from 'react';
+import { useOktaAuth } from '@okta/okta-react';
 import { 
   Typography, 
   Box, 
@@ -14,7 +14,6 @@ import {
   Alert,
 
 } from '@mui/material';
-import config from '../config/config';
 import { 
   StarOutline as StarIcon,
   CalendarToday as CalendarIcon,
@@ -64,8 +63,7 @@ const ProfileStat: React.FC<{
 );
 
 const Profile: React.FC = () => {
-  const { user, isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
-
+  const { authState } = useOktaAuth();
   const muiTheme = useMuiTheme();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -90,85 +88,17 @@ const Profile: React.FC = () => {
     }
   });
 
-  useEffect(() => {
-    const getUserMetadata = async () => {
-      try {
-        const accessToken = await getAccessTokenSilently();
-        const mgmtDomain = config.auth0.mgmtDomain;
-        //const userDetailsByIdUrl = `https://${mgmtDomain}/api/v2/users/${user?.sub}`;
-        const userDetailsByIdUrl = `https://${mgmtDomain}/userinfo`;
-
-        console.log('Fetching metadata from:', userDetailsByIdUrl);
-        console.log('User sub:', user?.sub);
-        console.log('Management domain:', mgmtDomain);
-
-        const metadataResponse = await fetch(userDetailsByIdUrl, {
-          headers: {
-            //
-            access_token: `${accessToken}`
-          }
-        });
-
-        console.log('Response status:', metadataResponse.status);
-        console.log('Response headers:', Object.fromEntries(metadataResponse.headers.entries()));
-
-        if (!metadataResponse.ok) {
-          const errorText = await metadataResponse.text();
-          console.log('Error response:', errorText);
-          throw new Error(`HTTP error! status: ${metadataResponse.status}`);
-        }
-
-        const responseData = await metadataResponse.json();
-        console.log('Full response data:', responseData);
-        
-        const { user_metadata } = responseData;
-        console.log('User metadata:', user_metadata);
-        
-        if (user_metadata) {
-          setUserMetadata(user_metadata);
-        } else {
-          console.log('No user_metadata found in response');
-        }
-      } catch (error) {
-        console.error('Error fetching user metadata:', error);
-        // Fallback to empty metadata if API call fails
-        setUserMetadata({
-          address: '',
-          phone: '',
-          birthdate: '',
-          preferences: {
-            notifications: true,
-            newsletter: true
-          }
-        });
-      }
-    };
-
-    if (user?.sub) {
-      getUserMetadata();
-    }
-  }, [getAccessTokenSilently, user?.sub]);
+  const isAuthenticated = authState?.isAuthenticated || false;
+  const isLoading = authState?.isPending || false;
+  const user = authState?.idToken?.claims;
 
   const handleSaveMetadata = async () => {
     setIsSaving(true);
     try {
-      const accessToken = await getAccessTokenSilently();
-      const mgmtDomain = config.auth0.mgmtDomain;
-      const userDetailsByIdUrl = `https://${mgmtDomain}/api/v2/users/${user?.sub}`;
-
-      const response = await fetch(userDetailsByIdUrl, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ user_metadata: userMetadata })
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
+      // For Okta, we'll simulate saving metadata
+      // In a real app, you'd call your backend API
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
+      
       setSnackbar({
         open: true,
         message: 'Profile updated successfully!',
@@ -240,8 +170,8 @@ const Profile: React.FC = () => {
             zIndex: 1
           }}>
             <Avatar
-              src={user.picture}
-              alt={user.name}
+              src={typeof user?.picture === 'string' ? user.picture : undefined}
+              alt={user?.name || user?.email || 'User'}
               sx={{ 
                 width: 120, 
                 height: 120,
@@ -254,10 +184,10 @@ const Profile: React.FC = () => {
               textAlign: { xs: 'center', sm: 'left' }
             }}>
               <Typography variant="h4" gutterBottom fontWeight="bold">
-                {user.name}
+                {typeof user?.name === 'string' ? user.name : typeof user?.email === 'string' ? user.email : 'User'}
               </Typography>
               <Typography variant="body1" sx={{ opacity: 0.9 }}>
-                {user.email}
+                {typeof user?.email === 'string' ? user.email : ''}
               </Typography>
               <Chip 
                 label={membershipData.status}

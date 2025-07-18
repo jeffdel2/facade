@@ -10,7 +10,7 @@ import {
   Paper,
   useTheme as useMuiTheme
 } from '@mui/material';
-import { useAuth0 } from '@auth0/auth0-react';
+import { useOktaAuth } from '@okta/okta-react';
 import { useTheme } from '../themes/ThemeContext';
 
 const getWelcomeMessage = (themeType: string, userName: string) => {
@@ -27,9 +27,12 @@ const getWelcomeMessage = (themeType: string, userName: string) => {
 };
 
 const Home: React.FC = () => {
-  const { loginWithRedirect, isAuthenticated, user } = useAuth0();
+  const { authState, oktaAuth } = useOktaAuth();
   const { currentTheme } = useTheme();
   const muiTheme = useMuiTheme();
+  
+  const isAuthenticated = authState?.isAuthenticated || false;
+  const user = authState?.idToken?.claims;
 
   return (
     <Box>
@@ -90,11 +93,7 @@ const Home: React.FC = () => {
               <Button
                 variant="contained"
                 size="large"
-                onClick={() => loginWithRedirect({
-                  authorizationParams: {
-                    screen_hint: 'signup'
-                  }
-                })}
+                onClick={() => oktaAuth.signInWithRedirect({ originalUri: window.location.origin })}
                 sx={{
                   px: 4,
                   py: 1.5,
@@ -119,7 +118,7 @@ const Home: React.FC = () => {
                   opacity: 0.95
                 }}
               >
-                {getWelcomeMessage(currentTheme.type, user?.name || 'valued member')}
+                {getWelcomeMessage(currentTheme.type, typeof user?.name === 'string' ? user.name : 'valued member')}
               </Typography>
             )}
           </Box>
@@ -245,7 +244,7 @@ const Home: React.FC = () => {
             <Button
               variant="outlined"
               size="large"
-              onClick={() => loginWithRedirect()}
+              onClick={() => oktaAuth.signInWithRedirect({ originalUri: window.location.origin })}
               sx={{
                 mt: 3,
                 px: 4,

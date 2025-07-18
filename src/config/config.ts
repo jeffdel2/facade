@@ -2,21 +2,21 @@ import { ThemeType } from '../themes/types';
 
 interface Config {
   defaultTheme: ThemeType;
-  auth0: {
+  okta: {
     domain: string;
     clientId: string;
-    mgmtDomain: string;
-    audience: string;
+    issuer: string;
+    redirectUri: string;
   };
 }
 
 const config: Config = {
   defaultTheme: 'retail',
-  auth0: {
-    domain: process.env.REACT_APP_AUTH0_DOMAIN || '',
-    mgmtDomain: process.env.REACT_APP_AUTH0_MGMT_DOMAIN || '',
-    clientId: process.env.REACT_APP_AUTH0_CLIENT_ID || '',
-    audience: process.env.REACT_APP_AUTH0_AUDIENCE || ''
+  okta: {
+    domain: process.env.REACT_APP_OKTA_DOMAIN || '',
+    clientId: process.env.REACT_APP_OKTA_CLIENT_ID || '',
+    issuer: process.env.REACT_APP_OKTA_ISSUER || '',
+    redirectUri: process.env.REACT_APP_OKTA_REDIRECT_URI || `${window.location.origin}/login/callback`
   }
 };
 
